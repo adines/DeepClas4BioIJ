@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.scijava</groupId>
+        <artifactId>pom-scijava</artifactId>
+        <version>12.0.0</version>
+        <relativePath />
+    </parent>
+    <groupId>com</groupId>
+    <version>1.0</version>
+    <name>io.github.adines:DeepClassificationJPlugin</name>
+    <description>A plugin that calls the DeepClassificationJ API.</description>
+    <url>https://github.com/adines/DeepClassificationJPlugin</url>
+    <inceptionYear>2017</inceptionYear>
+    <organization>
+        <name>University of La Rioja</name>
+        <url>http://www.unirioja.es/</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>Simplified BSD License</name>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <mailingLists>
+        <mailingList>
+            <name>ImageJ Forum</name>
+            <archive>http://forum.imagej.net/</archive>
+        </mailingList>
+    </mailingLists>
+    <scm>
+        <connection>scm:git:git@github.com:adines/DeepClassificationJPlugin.git</connection>
+        <developerConnection>scm:git:git@github.com:adines/DeepClassificationJPlugin.git</developerConnection>
+        <url>git@github.com:adines/DeepClassificationJPlugin.git</url>
+    </scm>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/adines/DeepClassificationJPlugin/issues</url>
+    </issueManagement>
+    <ciManagement>
+        <system>None</system>
+    </ciManagement>
+    <properties>
+        <package-name>io.github.adines.deepclassificationjplugin</package-name>
+        <main-class>io.github.joheras.deepclassificationjplugin</main-class>
+        <license.licenseName>bsd_2</license.licenseName>
+        <license.copyrightOwners>University of La Rioja</license.copyrightOwners>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <scijava.jvm.version>1.8</scijava.jvm.version>
+    </properties>
+    <developers>
+        <developer>
+            <id>adines</id>
+            <name>Adrián Inés</name>
+            <url>http://www.unirioja.es/cu/adines</url>
+            <roles>
+                <role>lead</role>
+                <role>developer</role>
+                <role>debugger</role>
+                <role>reviewer</role>
+                <role>support</role>
+                <role>maintainer</role>
+            </roles>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>None</name>
+        </contributor>
+    </contributors>
+
+    <artifactId>DeepClassificationJPlugin</artifactId>
+    <packaging>jar</packaging>
+    <repositories>
+        <repository>
+            <id>imagej.public</id>
+            <url>http://maven.imagej.net/content/groups/public</url>
+        </repository>
+    </repositories>
+    <dependencies>
+         <!-- ImageJ dependencies -->
+        <dependency>
+            <groupId>net.imagej</groupId>
+            <artifactId>imagej-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.imagej</groupId>
+            <artifactId>imagej-legacy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.imagej</groupId>
+            <artifactId>ij</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.imagej</groupId>
+            <artifactId>imagej</artifactId>
+        </dependency>
+        <!-- SciJava dependencies -->
+        <dependency>
+            <groupId>org.scijava</groupId>
+            <artifactId>scijava-common</artifactId>
+            <version>2.61.0</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
+</project>
