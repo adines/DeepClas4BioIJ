@@ -35,7 +35,6 @@ public class DeepClassificationJ_ implements Command {
     private String pathAPI;
 
     GenericDialog gd;
-    FilenameFilterFramework filter;
     Choice frameworkChoices;
     Choice modelChoices;
     String[] opcionesModel = {"VGG16", "VGG19", "Inception", "Resnet50", "ResNetISIC"};
