@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.imagej.ImageJ;
 
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
@@ -43,7 +44,15 @@ public class DeepClassificationJ_ implements Command {
     @Override
     public void run() {
         try {
-            String comando = "python " + pathAPI + "listFrameworks.py";
+            String so=System.getProperty("os.name");
+            String python;
+            if(so.contains("Windows"))
+            {
+                python="python ";
+            }else{
+                python="python3 ";
+            }
+            String comando = python + pathAPI + "listFrameworks.py";
             Process p = Runtime.getRuntime().exec(comando);
             p.waitFor();
             JSONParser parser = new JSONParser();
@@ -69,7 +78,7 @@ public class DeepClassificationJ_ implements Command {
             frameworkChoices = (Choice) v.get(0);
             modelChoices = (Choice) v.get(1);
 
-            comando = "python " + pathAPI + "listModels.py -f Keras";
+            comando = python + pathAPI + "listModels.py -f Keras";
             p = Runtime.getRuntime().exec(comando);
             p.waitFor();
             JSONParser parser2 = new JSONParser();
@@ -85,7 +94,7 @@ public class DeepClassificationJ_ implements Command {
                 public void itemStateChanged(ItemEvent e) {
                     try {
                         String frameworkSelected = frameworkChoices.getSelectedItem();
-                        String comando = "python " + pathAPI + "listModels.py -f " + frameworkSelected;
+                        String comando = python + pathAPI + "listModels.py -f " + frameworkSelected;
                         Process p = Runtime.getRuntime().exec(comando);
                         p.waitFor();
                         JSONParser parser = new JSONParser();
@@ -115,7 +124,7 @@ public class DeepClassificationJ_ implements Command {
             String framework = gd.getNextChoice();
             String model = gd.getNextChoice();
 
-            comando = "python " + pathAPI + "predict.py -i " + image + " -f " + framework + " -m " + model;
+            comando = python + pathAPI + "predict.py -i " + image + " -f " + framework + " -m " + model;
             System.out.println(comando);
             p = Runtime.getRuntime().exec(comando);
             p.waitFor();
@@ -136,5 +145,15 @@ public class DeepClassificationJ_ implements Command {
         } catch (ParseException ex) {
             Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public static void main(String args[])
+    {
+        final ImageJ ij=new ImageJ();
+        ImagePlus imp=IJ.openImage("C:\\Users\\adines\\Desktop\\PredictDL4JMaven\\lion.jpg");
+        imp.show();
+        ij.ui().showUI();
+        ij.command().run(DeepClassificationJ_.class, true);
+        
     }
 }
