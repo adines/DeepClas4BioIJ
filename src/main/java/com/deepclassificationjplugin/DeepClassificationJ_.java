@@ -6,13 +6,9 @@ import ij.gui.GenericDialog;
 import java.awt.Choice;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +16,11 @@ import java.util.logging.Logger;
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -32,21 +33,29 @@ public class DeepClassificationJ_ implements Command {
     private ImagePlus imp;
     @Parameter
     private String pathAPI;
-    
+
     GenericDialog gd;
     FilenameFilterFramework filter;
     Choice frameworkChoices;
     Choice modelChoices;
     String[] opcionesModel = {"VGG16", "VGG19", "Inception", "Resnet50", "ResNetISIC"};
+    String[] opcionesFramework;
 
     @Override
     public void run() {
         try {
-
-
-            String[] opcionesFramework = {"Keras", "Caffe", "DL4J", "TensorFlow"};
-            String fr = "Keras";
-            filter = new FilenameFilterFramework(fr);
+            String comando = "python " + pathAPI + "listFrameworks.py";
+            Process p = Runtime.getRuntime().exec(comando);
+            p.waitFor();
+            JSONParser parser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) parser.parse(new FileReader("data.json"));
+            JSONArray frameworks = (JSONArray) jsonObject.get("frameworks");
+            int i = 0;
+            opcionesFramework = new String[frameworks.size()];
+            for (Object o : frameworks) {
+                opcionesFramework[i] = (String) o;
+                i++;
+            }
 
             imp = IJ.getImage();
 
@@ -60,67 +69,42 @@ public class DeepClassificationJ_ implements Command {
             Vector v = gd.getChoices();
             frameworkChoices = (Choice) v.get(0);
             modelChoices = (Choice) v.get(1);
-            File directory = new File(pathAPI + fr);
-            String[] files = directory.list(filter);
-            List<String> f = new ArrayList<String>();
 
-            for (String s : files) {
-                int i = s.indexOf("ModelClassification.py");
-                f.add(s.substring(fr.length(), i));
-            }
+            comando = "python " + pathAPI + "listModels.py -f Keras";
+            p = Runtime.getRuntime().exec(comando);
+            p.waitFor();
+            JSONParser parser2 = new JSONParser();
+            JSONObject jsonObject2 = (JSONObject) parser2.parse(new FileReader("data.json"));
+            JSONArray models = (JSONArray) jsonObject2.get("models");
             modelChoices.removeAll();
-            for (String s : f) {
-                modelChoices.add(s);
+            for (Object o : models) {
+                modelChoices.add((String) o);
             }
+
             frameworkChoices.addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
-                    String frameworkSelected = frameworkChoices.getSelectedItem();
-                    if (!frameworkSelected.equals("DL4J")) {
-                        filter = new FilenameFilterFramework(frameworkSelected);
-                        File directory = new File(pathAPI + frameworkSelected);
-                        String[] files = directory.list(filter);
-                        List<String> f = new ArrayList<String>();
-                        for (String s : files) {
-                            int i = s.indexOf("ModelClassification.py");
-                            f.add(s.substring(frameworkSelected.length(), i));
-                        }
+                    try {
+                        String frameworkSelected = frameworkChoices.getSelectedItem();
+                        String comando = "python " + pathAPI + "listModels.py -f " + frameworkSelected;
+                        Process p = Runtime.getRuntime().exec(comando);
+                        p.waitFor();
+                        JSONParser parser = new JSONParser();
+                        JSONObject jsonObject = (JSONObject) parser.parse(new FileReader("data.json"));
+                        JSONArray frameworks = (JSONArray) jsonObject.get("models");
                         modelChoices.removeAll();
-                        for (String s : f) {
-                            modelChoices.add(s);
+                        for (Object o : frameworks) {
+                            modelChoices.add((String) o);
                         }
                         modelChoices.doLayout();
                         gd.doLayout();
-                    } else {
-                        try {
-                            String comando = "java -jar " + pathAPI + "PredictDL4JMaven-1.0-SNAPSHOT.jar";
-                            Process p = Runtime.getRuntime().exec(comando);
-
-                            BufferedReader stdout = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-                            ReadErrorThread rerror = new ReadErrorThread(p.getErrorStream());
-                            ReadOutThread rOut = new ReadOutThread(stdout);
-
-                            rerror.start();
-                            rOut.start();
-                            rerror.join();
-                            rOut.join();
-                            String ultimaLinea = rOut.getLinea();
-                            String modelos[] = ultimaLinea.split(",");
-
-                            modelChoices.removeAll();
-                            for (String s : modelos) {
-                                modelChoices.add(s);
-                            }
-                            modelChoices.doLayout();
-                            gd.doLayout();
-                        } catch (IOException ex) {
-                            Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
                 }
             });
 
@@ -130,33 +114,27 @@ public class DeepClassificationJ_ implements Command {
             }
 
             String framework = gd.getNextChoice();
-            System.out.println(framework);
             String model = gd.getNextChoice();
-            System.out.println(model);
 
-            String comando = "python " + pathAPI + "predict.py -i " + image + " -f " + framework + " -m " + model;
+            comando = "python " + pathAPI + "predict.py -i " + image + " -f " + framework + " -m " + model;
             System.out.println(comando);
-            Process p = Runtime.getRuntime().exec(comando);
+            p = Runtime.getRuntime().exec(comando);
+            p.waitFor();
 
-            BufferedReader stdout = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            JSONParser parser3 = new JSONParser();
+            JSONObject jsonObject3 = (JSONObject) parser3.parse(new FileReader("data.json"));
+            String classPredict = (String) jsonObject3.get("class");
 
-            ReadErrorThread rerror = new ReadErrorThread(p.getErrorStream());
-            ReadOutThread rOut = new ReadOutThread(stdout);
-
-            rerror.start();
-            rOut.start();
-            rerror.join();
-            rOut.join();
-            String ultimaLinea = rOut.getLinea();
-
-            IJ.showMessage("Prediction", "The class which the image belongs is " + ultimaLinea);
-            System.out.println(ultimaLinea);
+            IJ.showMessage("Prediction", "The class which the image belongs is " + classPredict);
+            System.out.println(classPredict);
 
         } catch (FileNotFoundException ex) {
             IJ.showMessage("Error", "You need to indicate the path of the API in the config file.");
         } catch (IOException ex) {
             Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
+            Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
             Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
