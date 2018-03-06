@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.imagej.ImageJ;
 
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
@@ -145,15 +144,5 @@ public class DeepClassificationJ_ implements Command {
         } catch (ParseException ex) {
             Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    public static void main(String args[])
-    {
-        final ImageJ ij=new ImageJ();
-        ImagePlus imp=IJ.openImage("C:\\Users\\adines\\Desktop\\PredictDL4JMaven\\lion.jpg");
-        imp.show();
-        ij.ui().showUI();
-        ij.command().run(DeepClassificationJ_.class, true);
-        
     }
 }
