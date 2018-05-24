@@ -1,4 +1,4 @@
-package com.deepclassificationjplugin;
+package com.deepclassificationj;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -26,8 +26,8 @@ import org.json.simple.parser.ParseException;
  *
  * @author adines
  */
-@Plugin(type = Command.class)
-public class DeepClassificationJ_ implements Command {
+@Plugin(type = Command.class, headless = true, menuPath = "Plugins>DeepClassificationJ")
+public class DeepClassificationJ implements Command {
 
     @Parameter
     private ImagePlus imp;
@@ -42,6 +42,7 @@ public class DeepClassificationJ_ implements Command {
 
     @Override
     public void run() {
+        
         try {
             String so=System.getProperty("os.name");
             String python;
@@ -106,11 +107,11 @@ public class DeepClassificationJ_ implements Command {
                         modelChoices.doLayout();
                         gd.doLayout();
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (IOException ex) {
-                        Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ParseException ex) {
-                        Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             });
@@ -124,7 +125,6 @@ public class DeepClassificationJ_ implements Command {
             String model = gd.getNextChoice();
 
             comando = python + pathAPI + "predict.py -i " + image + " -f " + framework + " -m " + model;
-            System.out.println(comando);
             p = Runtime.getRuntime().exec(comando);
             p.waitFor();
 
@@ -133,16 +133,15 @@ public class DeepClassificationJ_ implements Command {
             String classPredict = (String) jsonObject3.get("class");
 
             IJ.showMessage("Prediction", "The class which the image belongs is " + classPredict);
-            System.out.println(classPredict);
 
         } catch (FileNotFoundException ex) {
-            IJ.showMessage("Error", "You need to indicate the path of the API in the config file.");
+            Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
-            Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
-            Logger.getLogger(DeepClassificationJ_.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

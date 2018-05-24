@@ -4,46 +4,56 @@
     <parent>
         <groupId>org.scijava</groupId>
         <artifactId>pom-scijava</artifactId>
-        <version>12.0.0</version>
+        <version>16.1.0</version>
         <relativePath />
     </parent>
+    
     <groupId>com</groupId>
+    <artifactId>DeepClassificationJPlugin</artifactId>
     <version>1.0</version>
+    
     <name>io.github.adines:DeepClassificationJPlugin</name>
     <description>A plugin that calls the DeepClassificationJ API.</description>
     <url>https://github.com/adines/DeepClassificationJPlugin</url>
-    <inceptionYear>2017</inceptionYear>
+    <inceptionYear>2018</inceptionYear>
+    
     <organization>
         <name>University of La Rioja</name>
         <url>http://www.unirioja.es/</url>
     </organization>
+    
     <licenses>
         <license>
             <name>Simplified BSD License</name>
             <distribution>repo</distribution>
         </license>
     </licenses>
+    
     <mailingLists>
         <mailingList>
             <name>ImageJ Forum</name>
             <archive>http://forum.imagej.net/</archive>
         </mailingList>
     </mailingLists>
+    
     <scm>
         <connection>scm:git:git@github.com:adines/DeepClassificationJPlugin.git</connection>
         <developerConnection>scm:git:git@github.com:adines/DeepClassificationJPlugin.git</developerConnection>
+        <tag>HEAD</tag>
         <url>git@github.com:adines/DeepClassificationJPlugin.git</url>
     </scm>
+    
     <issueManagement>
         <system>GitHub Issues</system>
         <url>https://github.com/adines/DeepClassificationJPlugin/issues</url>
     </issueManagement>
+    
     <ciManagement>
         <system>None</system>
     </ciManagement>
+    
     <properties>
-        <package-name>io.github.adines.deepclassificationjplugin</package-name>
-        <main-class>io.github.joheras.deepclassificationjplugin</main-class>
+        <main-class>DeepClassificationJ_</main-class>
         <license.licenseName>bsd_2</license.licenseName>
         <license.copyrightOwners>University of La Rioja</license.copyrightOwners>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -72,8 +82,7 @@
         </contributor>
     </contributors>
 
-    <artifactId>DeepClassificationJPlugin</artifactId>
-    <packaging>jar</packaging>
+    
     <repositories>
         <repository>
             <id>imagej.public</id>
@@ -81,29 +90,9 @@
         </repository>
     </repositories>
     <dependencies>
-         <!-- ImageJ dependencies -->
-        <dependency>
-            <groupId>net.imagej</groupId>
-            <artifactId>imagej-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.imagej</groupId>
-            <artifactId>imagej-legacy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.imagej</groupId>
-            <artifactId>ij</artifactId>
-        </dependency>
         <dependency>
             <groupId>net.imagej</groupId>
             <artifactId>imagej</artifactId>
-        </dependency>
-        <!-- SciJava dependencies -->
-        <dependency>
-            <groupId>org.scijava</groupId>
-            <artifactId>scijava-common</artifactId>
-            <version>2.61.0</version>
-            <type>jar</type>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.json/json -->
         <dependency>
