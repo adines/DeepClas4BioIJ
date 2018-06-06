@@ -1,4 +1,4 @@
-package com.deepclassificationj;
+package com.deepclas4bioij;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -26,8 +26,8 @@ import org.json.simple.parser.ParseException;
  *
  * @author adines
  */
-@Plugin(type = Command.class, headless = true, menuPath = "Plugins>DeepClassificationJ")
-public class DeepClassificationJ implements Command {
+@Plugin(type = Command.class, headless = true, menuPath = "Plugins>DeepClas4BioIJ")
+public class DeepClas4BioIJ implements Command {
 
     @Parameter
     private ImagePlus imp;
@@ -107,11 +107,11 @@ public class DeepClassificationJ implements Command {
                         modelChoices.doLayout();
                         gd.doLayout();
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (IOException ex) {
-                        Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ParseException ex) {
-                        Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             });
@@ -135,13 +135,13 @@ public class DeepClassificationJ implements Command {
             IJ.showMessage("Prediction", "The class which the image belongs is " + classPredict);
 
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
-            Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
-            Logger.getLogger(DeepClassificationJ.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
