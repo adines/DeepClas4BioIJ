@@ -4,14 +4,25 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import java.awt.Choice;
+import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
@@ -31,8 +42,10 @@ public class DeepClas4BioIJ implements Command {
 
     @Parameter
     private ImagePlus imp;
-    @Parameter
+
     private String pathAPI;
+    
+    JDialog adAPId = null;
 
     GenericDialog gd;
     Choice frameworkChoices;
@@ -52,6 +65,46 @@ public class DeepClas4BioIJ implements Command {
             }else{
                 python="python3 ";
             }
+            
+            
+            JFileChooser pathAPIFileChooser = new JFileChooser();
+            pathAPIFileChooser.setCurrentDirectory(new java.io.File("."));
+            pathAPIFileChooser.setDialogTitle("Select the path of the API");
+            pathAPIFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+            GridLayout glAPI = new GridLayout(2, 2);
+            JPanel apiPanel = new JPanel(glAPI);
+
+            JLabel lPath = new JLabel();
+            JButton bPath = new JButton("Select");
+            apiPanel.add(new JLabel("Select the path of the API"));
+            apiPanel.add(new Label());
+            apiPanel.add(lPath);
+            apiPanel.add(bPath);
+
+            bPath.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (pathAPIFileChooser.showOpenDialog(apiPanel) == JFileChooser.APPROVE_OPTION) {
+                        lPath.setText(pathAPIFileChooser.getSelectedFile().getAbsolutePath());
+                    }
+                }
+            });
+
+            JOptionPane adAPI = new JOptionPane(apiPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION);
+
+            adAPId = adAPI.createDialog("API path");
+
+            adAPId.setVisible(true);
+            Object selectedValue = adAPI.getValue();
+            if (selectedValue instanceof Integer) {
+                int selected = ((Integer) selectedValue).intValue();
+                if (selected == 0) {
+                    pathAPI = lPath.getText() + File.separator;
+
+                    adAPId.dispose();
+  
+            
             String comando = python + pathAPI + "listFrameworks.py";
             Process p = Runtime.getRuntime().exec(comando);
             p.waitFor();
@@ -133,7 +186,7 @@ public class DeepClas4BioIJ implements Command {
             String classPredict = (String) jsonObject3.get("class");
 
             IJ.showMessage("Prediction", "The class which the image belongs is " + classPredict);
-
+                }}
         } catch (FileNotFoundException ex) {
             Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -142,6 +195,10 @@ public class DeepClas4BioIJ implements Command {
             Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
             Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
+        }finally {
+            if (adAPId != null) {
+                adAPId.dispose();
+            }
         }
     }
 }
