@@ -4,25 +4,14 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import java.awt.Choice;
-import java.awt.GridLayout;
-import java.awt.Label;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
@@ -43,10 +32,6 @@ public class DeepClas4BioIJ implements Command {
     @Parameter
     private ImagePlus imp;
 
-    private String pathAPI;
-    
-    JDialog adAPId = null;
-
     GenericDialog gd;
     Choice frameworkChoices;
     Choice modelChoices;
@@ -57,55 +42,8 @@ public class DeepClas4BioIJ implements Command {
     public void run() {
         
         try {
-            String so=System.getProperty("os.name");
-            String python;
-            if(so.contains("Windows"))
-            {
-                python="python ";
-            }else{
-                python="python3 ";
-            }
             
-            
-            JFileChooser pathAPIFileChooser = new JFileChooser();
-            pathAPIFileChooser.setCurrentDirectory(new java.io.File("."));
-            pathAPIFileChooser.setDialogTitle("Select the path of the API");
-            pathAPIFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-            GridLayout glAPI = new GridLayout(2, 2);
-            JPanel apiPanel = new JPanel(glAPI);
-
-            JLabel lPath = new JLabel();
-            JButton bPath = new JButton("Select");
-            apiPanel.add(new JLabel("Select the path of the API"));
-            apiPanel.add(new Label());
-            apiPanel.add(lPath);
-            apiPanel.add(bPath);
-
-            bPath.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (pathAPIFileChooser.showOpenDialog(apiPanel) == JFileChooser.APPROVE_OPTION) {
-                        lPath.setText(pathAPIFileChooser.getSelectedFile().getAbsolutePath());
-                    }
-                }
-            });
-
-            JOptionPane adAPI = new JOptionPane(apiPanel, JOptionPane.PLAIN_MESSAGE, JOptionPane.YES_NO_OPTION);
-
-            adAPId = adAPI.createDialog("API path");
-
-            adAPId.setVisible(true);
-            Object selectedValue = adAPI.getValue();
-            if (selectedValue instanceof Integer) {
-                int selected = ((Integer) selectedValue).intValue();
-                if (selected == 0) {
-                    pathAPI = lPath.getText() + File.separator;
-
-                    adAPId.dispose();
-  
-            
-            String comando = python + pathAPI + "listFrameworks.py";
+            String comando ="deepclas4bio-listFrameworks";
             Process p = Runtime.getRuntime().exec(comando);
             p.waitFor();
             JSONParser parser = new JSONParser();
@@ -131,7 +69,7 @@ public class DeepClas4BioIJ implements Command {
             frameworkChoices = (Choice) v.get(0);
             modelChoices = (Choice) v.get(1);
 
-            comando = python + pathAPI + "listModels.py -f Keras";
+            comando = "deepclas4bio-listModels Keras";
             p = Runtime.getRuntime().exec(comando);
             p.waitFor();
             JSONParser parser2 = new JSONParser();
@@ -147,7 +85,7 @@ public class DeepClas4BioIJ implements Command {
                 public void itemStateChanged(ItemEvent e) {
                     try {
                         String frameworkSelected = frameworkChoices.getSelectedItem();
-                        String comando = python + pathAPI + "listModels.py -f " + frameworkSelected;
+                        String comando ="deepclas4bio-listModels " + frameworkSelected;
                         Process p = Runtime.getRuntime().exec(comando);
                         p.waitFor();
                         JSONParser parser = new JSONParser();
@@ -177,7 +115,7 @@ public class DeepClas4BioIJ implements Command {
             String framework = gd.getNextChoice();
             String model = gd.getNextChoice();
 
-            comando = python + pathAPI + "predict.py -i " + image + " -f " + framework + " -m " + model;
+            comando ="deepclas4bio-predict " + image + " " + framework + " " + model;
             p = Runtime.getRuntime().exec(comando);
             p.waitFor();
 
@@ -186,7 +124,7 @@ public class DeepClas4BioIJ implements Command {
             String classPredict = (String) jsonObject3.get("class");
 
             IJ.showMessage("Prediction", "The class which the image belongs is " + classPredict);
-                }}
+                
         } catch (FileNotFoundException ex) {
             Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -195,10 +133,6 @@ public class DeepClas4BioIJ implements Command {
             Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
             Logger.getLogger(DeepClas4BioIJ.class.getName()).log(Level.SEVERE, null, ex);
-        }finally {
-            if (adAPId != null) {
-                adAPId.dispose();
-            }
         }
     }
 }
