@@ -5,7 +5,7 @@ DeepClas4BioIJ is an ImageJ plugin that connects ImageJ with the [DeepClas4Bio A
 DeepClas4BioIJ has been built on top of [SciJava Common](https://imagej.net/SciJava_Common) using SciJava Commands.
 
 ## Requirements
-To use this plugin is necessary to have installed ImageJ with Java 8 and download the [DeepClas4Bio API](https://github.com/adines/DeepClas4Bio).
+To use this plugin is necessary to have installed ImageJ with Java 8 and [DeepClas4Bio API](https://github.com/adines/DeepClas4Bio).
 
 ## Installation
 This plugin is updated in the ImageJ Update site and the recommendable way to install it is download the plugin using the [ImageJ Update Site](http://sites.imagej.net/Adines/).
@@ -22,16 +22,11 @@ To use the plugin you must follow the following steps:
  
  Go to Plugins-->DeepClas4BioIJ
 
- 
- 3. Indicate the path to DeepClas4Bio API
 
-![Path of the API](docs/images/002.png)
-
-
- 4. Select the framework and the model you want use
+ 3. Select the framework and the model you want use
  ![Select framework and model](docs/images/003.png)
 
  
- 5. Visualize the output
+ 4. Visualize the output
  
  ![Visualize the output](docs/images/004.png)
